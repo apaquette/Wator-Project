@@ -83,15 +83,16 @@ struct cell{
   bool hasMoved = false;
   CellType type = EMPTY;
   sf::Color color = sf::Color::Blue;
-  int x, y;
-  int breed = 0;
-  int starve = 0;
+  int x, y, breed = 0, starve = 0;
 };
 
 sf::RectangleShape recArray[xdim][ydim];
 cell worldData[xdim][ydim];
 
-
+/*!
+  \fn initializeEcosystem
+  \brief Randomnly generates fish and shark on the map based on the parameters provided by the user
+*/
 void initializeEcoSystem(){
   std::random_device rd;  // a seed source for the random number engine
   std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
@@ -128,6 +129,10 @@ void initializeEcoSystem(){
   }
 }
 
+/*!
+  \fn setGrid
+  \brief creates the grid to be displayed
+*/
 void setGrid(){
   for(int i = 0; i < xdim; ++i){
     for(int k = 0; k < ydim; ++k){//give each one a size, position and color
@@ -138,6 +143,10 @@ void setGrid(){
   }
 }
 
+/*!
+  \fn moveFish
+  \brief 
+*/
 void moveFish(Direction dir, cell oldCell){
   cell newCell = oldCell;
   newCell.hasMoved = true;
@@ -186,33 +195,61 @@ void moveFish(Direction dir, cell oldCell){
   worldData[newCell.x][newCell.y] = newCell;
 }
 
-std::vector<Direction> getLegalSharkMoves(cell shark){
+/*!
+  \fn getLegalSharkMoves
+  \brief returns a vector of legal directions a shark can take. This is only used if a fish is found near a shark
+*/
+std::vector<Direction> getLegalSharkMoves(cell shark, Direction foundFish){
   std::vector<Direction> legalMoves;
   int x = shark.x;
   int y = shark.y;
-  //UP
-  int checkY = ((y - 1) + xdim) % xdim;
-  if(worldData[x][checkY].type == FISH){
-    legalMoves.insert(legalMoves.end(), UP);
+
+  switch(foundFish){
+    case UP:
+      {
+        int checkY = ((y - 1) + xdim) % xdim;
+        if(worldData[x][checkY].type == FISH){
+          legalMoves.insert(legalMoves.end(), UP);
+        }
+        foundFish = DOWN;
+      }
+    case DOWN:
+      {
+        int checkY = (y + 1) % ydim;
+        if(worldData[x][checkY].type == FISH){
+          legalMoves.insert(legalMoves.end(), DOWN);
+        }
+        foundFish = LEFT;
+      }
+    case LEFT:
+    {
+      int checkX = ((x - 1) + xdim) % xdim;
+      if(worldData[checkX][y].type == FISH){
+        legalMoves.insert(legalMoves.end(), LEFT);
+      }
+      foundFish = RIGHT;
+    }
+      
+    case RIGHT:
+      {
+        int checkX = (x + 1) % xdim;
+        if(worldData[checkX][y].type == FISH){
+          legalMoves.insert(legalMoves.end(), RIGHT);
+        }
+      }
   }
+
+  //UP
+  
 
   //DOWN
-  checkY = (y + 1) % ydim;
-  if(worldData[x][checkY].type == FISH){
-    legalMoves.insert(legalMoves.end(), DOWN);
-  }
+  
 
   //LEFT
-  int checkX = ((x - 1) + xdim) % xdim;
-  if(worldData[checkX][y].type == FISH){
-    legalMoves.insert(legalMoves.end(), LEFT);
-  }
+  
 
   //RIGHT
-  checkX = (x + 1) % xdim;
-  if(worldData[checkX][y].type == FISH){
-    legalMoves.insert(legalMoves.end(), RIGHT);
-  }
+  
 
   if(legalMoves.size() >= 1 && worldData[x][y].starve > 0){
     --worldData[x][y].starve;
@@ -221,6 +258,10 @@ std::vector<Direction> getLegalSharkMoves(cell shark){
   return legalMoves;
 }
 
+/*!
+  \fn getLegalMoves
+  \brief returns a vector of legal directions a creature can take based on a given cell position
+*/
 std::vector<Direction> getLegalMoves(cell aCell){
   std::vector<Direction> legalMoves;
   int x = aCell.x;
@@ -228,7 +269,7 @@ std::vector<Direction> getLegalMoves(cell aCell){
   //UP
   int checkY = ((y - 1) + xdim) % xdim;
   if(aCell.type == SHARK && worldData[x][checkY].type == FISH){
-    return getLegalSharkMoves(aCell);
+    return getLegalSharkMoves(aCell, UP);
   }
   if(worldData[x][checkY].type == EMPTY){
     legalMoves.insert(legalMoves.end(), UP);
@@ -237,7 +278,7 @@ std::vector<Direction> getLegalMoves(cell aCell){
   //DOWN
   checkY = (y + 1) % ydim;
   if(aCell.type == SHARK && worldData[x][checkY].type == FISH){
-    return getLegalSharkMoves(aCell);
+    return getLegalSharkMoves(aCell, DOWN);
   }
   if(worldData[x][checkY].type == EMPTY){
     legalMoves.insert(legalMoves.end(), DOWN);
@@ -246,7 +287,7 @@ std::vector<Direction> getLegalMoves(cell aCell){
   //LEFT
   int checkX = ((x - 1) + xdim) % xdim;
   if(aCell.type == SHARK && worldData[checkX][y].type == FISH){
-    return getLegalSharkMoves(aCell);
+    return getLegalSharkMoves(aCell, LEFT);
   }
   if(worldData[checkX][y].type == EMPTY){
     legalMoves.insert(legalMoves.end(), LEFT);
@@ -255,7 +296,7 @@ std::vector<Direction> getLegalMoves(cell aCell){
   //RIGHT
   checkX = (x + 1) % xdim;
   if(aCell.type == SHARK && worldData[checkX][y].type == FISH){
-    return getLegalSharkMoves(aCell);
+    return getLegalSharkMoves(aCell, RIGHT);
   }
   if(worldData[checkX][y].type == EMPTY){
     legalMoves.insert(legalMoves.end(), RIGHT);
@@ -264,7 +305,11 @@ std::vector<Direction> getLegalMoves(cell aCell){
   return legalMoves;
 }
 
-void updateFish(){
+/*!
+  \fn updateGrid
+  \brief Moves fish and sharks in the grid based on predefined rules
+*/
+void updateGrid(){
   for(int x = 0; x < xdim; ++x){
     for(int y = 0; y < ydim; ++y){
       if(!worldData[x][y].hasMoved){
@@ -283,13 +328,13 @@ void updateFish(){
       }
     }//end y for-loop
   }//end x for-loop
-
   //reset hasMoved
   for(int x = 0; x < xdim; ++x){
     for(int y= 0; y < ydim; ++y){
       worldData[x][y].hasMoved = false;
     }
   }
+  setGrid();
 }
 
 int main(){
@@ -313,8 +358,7 @@ int main(){
         }
       }
       window.display();
-      updateFish();
-      setGrid();
+      updateGrid();
       std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
 
     //}//for - simulation loop
