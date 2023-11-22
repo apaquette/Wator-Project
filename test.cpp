@@ -62,6 +62,10 @@ const double sharkPercent = 0.01;
 const int numSharks = xdim*ydim*sharkPercent;
 const int numFish = xdim*ydim*fishPercent;
 
+const int FishBreed = 3;
+const int SharkBreed = 5;
+const int SharkStarve = 10;
+
 enum CellType{
   EMPTY,
   FISH,
@@ -80,6 +84,8 @@ struct cell{
   CellType type = EMPTY;
   sf::Color color = sf::Color::Blue;
   int x, y;
+  int breed = 0;
+  int starve = 0;
 };
 
 sf::RectangleShape recArray[xdim][ydim];
@@ -134,9 +140,34 @@ void setGrid(){
 
 void moveFish(Direction dir, cell oldCell){
   cell newCell = oldCell;
-  //empty cell
+  newCell.hasMoved = true;
   worldData[oldCell.x][oldCell.y].type = EMPTY;
   worldData[oldCell.x][oldCell.y].color = sf::Color::Blue;
+  switch(newCell.type){
+    case FISH:
+      if(newCell.breed >= FishBreed){//fish breeds
+        worldData[oldCell.x][oldCell.y] = oldCell;
+        worldData[oldCell.x][oldCell.y].breed = 0;
+        worldData[oldCell.x][oldCell.y].hasMoved = true;//prevent the new fish from moving after spawning
+        newCell.breed = -1; //this will be incremented later and reset to 0
+      }
+      ++newCell.breed;
+      break;
+    case SHARK:
+      ++newCell.starve;//shark is starving
+      if(newCell.starve >= SharkStarve){
+        return;
+      }
+      if(newCell.breed >= SharkBreed){//shark breeds
+        worldData[oldCell.x][oldCell.y] = oldCell;
+        worldData[oldCell.x][oldCell.y].breed = 0;
+        worldData[oldCell.x][oldCell.y].hasMoved = true;
+        newCell.breed = -1;
+      }
+      ++newCell.breed;
+      break;
+  }
+
 
   switch(dir){
     case UP:
@@ -152,8 +183,6 @@ void moveFish(Direction dir, cell oldCell){
       newCell.x = (oldCell.x + 1) % xdim;
       break;
   }
-
-  newCell.hasMoved = true;
   worldData[newCell.x][newCell.y] = newCell;
 }
 
@@ -183,6 +212,10 @@ std::vector<Direction> getLegalSharkMoves(cell shark){
   checkX = (x + 1) % xdim;
   if(worldData[checkX][y].type == FISH){
     legalMoves.insert(legalMoves.end(), RIGHT);
+  }
+
+  if(legalMoves.size() >= 1 && worldData[x][y].starve > 0){
+    --worldData[x][y].starve;
   }
 
   return legalMoves;
@@ -230,8 +263,6 @@ std::vector<Direction> getLegalMoves(cell aCell){
 
   return legalMoves;
 }
-
-
 
 void updateFish(){
   for(int x = 0; x < xdim; ++x){
