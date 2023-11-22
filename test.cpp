@@ -41,51 +41,255 @@
 // Code:
 
 #include <SFML/Graphics.hpp>
+#include <stdlib.h>
+#include <time.h>
+#include <random>
+#include <iostream>
 
-int main()
-{
-    int xdim = 30;
-    int ydim= 30;
-    int WindowXSize=800;
-    int WindowYSize=600;
-    int cellXSize=WindowXSize/xdim;
-    int cellYSize=WindowYSize/ydim;
-    //each shape will represent either a fish, shark or empty space
-    //e.g. blue for empty, red for shark and green for fish
-    sf::RectangleShape recArray[xdim][ydim];
-    int worldData[xdim][ydim];
-    for(int i=0;i<xdim;++i){
-      for(int k=0;k<ydim;++k){//give each one a size, position and color
-        recArray[i][k].setSize(sf::Vector2f(cellXSize,cellYSize));
-        recArray[i][k].setPosition(i*cellXSize,k*cellYSize);//position is top left corner!
-        int id=i*1-+k;
-        recArray[i][k].setFillColor(sf::Color::Blue);
-        if (id%2==0) recArray[i][k].setFillColor(sf::Color::Red);
-        else recArray[i][k].setFillColor(sf::Color::Green);
-      }
+#include <chrono>
+#include <thread>
+
+const int xdim = 30; //rows
+const int ydim= 30; //cols
+const int WindowXSize=800;
+const int WindowYSize=600;
+const int cellXSize=WindowXSize/xdim;
+const int cellYSize=WindowYSize/ydim;
+
+const double fishPercent = 0.05;
+const double sharkPercent = 0.01;
+
+const int numSharks = xdim*ydim*sharkPercent;
+const int numFish = xdim*ydim*fishPercent;
+
+enum CellType{
+  EMPTY,
+  FISH,
+  SHARK
+};
+
+enum Direction {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+};
+
+struct cell{
+  bool hasMoved = false;
+  CellType type = EMPTY;
+  sf::Color color = sf::Color::Blue;
+  int x, y;
+};
+
+sf::RectangleShape recArray[xdim][ydim];
+cell worldData[xdim][ydim];
+
+
+void initializeEcoSystem(){
+  std::random_device rd;  // a seed source for the random number engine
+  std::mt19937 gen(rd()); // mersenne_twister_engine seeded with rd()
+
+  //assign coordinates to cells
+  for(int x = 0; x < xdim; ++x){
+    for(int y = 0; y < ydim; ++y){
+      worldData[x][y].x = x;
+      worldData[x][y].y = y;
     }
-    sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
-    while (window.isOpen())
-    {
-      sf::Event event;
-      while (window.pollEvent(event))
-      {
-          if (event.type == sf::Event::Closed)
-              window.close();
-      }
-      //for(;;){
-      //loop these three lines to draw frames
-        window.clear(sf::Color::Black);
-        for(int i=0;i<xdim;++i){
-          for(int k=0;k<ydim;++k){
-            window.draw(recArray[i][k]);
-          }
+  }
+
+  //shuffle the assignment order to remove skewed assignment to top of grid
+  std::vector<int> assignmentOrder(xdim * ydim);
+  std::iota(assignmentOrder.begin(), assignmentOrder.end(), 0);
+  std::shuffle(assignmentOrder.begin(), assignmentOrder.end(), gen);
+
+  //assign fish
+  for (int i = 0; i < fishPercent * xdim * ydim; ++i) {
+    int row = assignmentOrder[i] / ydim;
+    int col = assignmentOrder[i] % ydim;
+
+    worldData[row][col].type = FISH;
+    worldData[row][col].color = sf::Color::Green;
+  }
+
+  //assign shark
+  for (int i = fishPercent * xdim * ydim; i < (fishPercent + sharkPercent) * xdim * ydim; ++i) {
+    int row = assignmentOrder[i] / ydim;
+    int col = assignmentOrder[i] % ydim;
+
+    worldData[row][col].type = SHARK;
+    worldData[row][col].color = sf::Color::Red;
+  }
+}
+
+void setGrid(){
+  for(int i = 0; i < xdim; ++i){
+    for(int k = 0; k < ydim; ++k){//give each one a size, position and color
+      recArray[i][k].setSize(sf::Vector2f(cellXSize,cellYSize));
+      recArray[i][k].setPosition(i*cellXSize,k*cellYSize);//position is top left corner!
+      recArray[i][k].setFillColor(worldData[i][k].color);
+    }
+  }
+}
+
+void moveFish(Direction dir, cell oldCell){
+  cell newCell = oldCell;
+  //empty cell
+  worldData[oldCell.x][oldCell.y].type = EMPTY;
+  worldData[oldCell.x][oldCell.y].color = sf::Color::Blue;
+
+  switch(dir){
+    case UP:
+      newCell.y = ((oldCell.y - 1) + ydim) % ydim;
+      break;
+    case DOWN:
+      newCell.y = (oldCell.y + 1) % ydim;
+      break;
+    case LEFT:
+      newCell.x = ((oldCell.x - 1) + xdim) % xdim;
+      break;
+    case RIGHT:
+      newCell.x = (oldCell.x + 1) % xdim;
+      break;
+  }
+
+  newCell.hasMoved = true;
+  worldData[newCell.x][newCell.y] = newCell;
+}
+
+std::vector<Direction> getLegalSharkMoves(cell shark){
+  std::vector<Direction> legalMoves;
+  int x = shark.x;
+  int y = shark.y;
+  //UP
+  int checkY = ((y - 1) + xdim) % xdim;
+  if(worldData[x][checkY].type == FISH){
+    legalMoves.insert(legalMoves.end(), UP);
+  }
+
+  //DOWN
+  checkY = (y + 1) % ydim;
+  if(worldData[x][checkY].type == FISH){
+    legalMoves.insert(legalMoves.end(), DOWN);
+  }
+
+  //LEFT
+  int checkX = ((x - 1) + xdim) % xdim;
+  if(worldData[checkX][y].type == FISH){
+    legalMoves.insert(legalMoves.end(), LEFT);
+  }
+
+  //RIGHT
+  checkX = (x + 1) % xdim;
+  if(worldData[checkX][y].type == FISH){
+    legalMoves.insert(legalMoves.end(), RIGHT);
+  }
+
+  return legalMoves;
+}
+
+std::vector<Direction> getLegalMoves(cell aCell){
+  std::vector<Direction> legalMoves;
+  int x = aCell.x;
+  int y = aCell.y;
+  //UP
+  int checkY = ((y - 1) + xdim) % xdim;
+  if(aCell.type == SHARK && worldData[x][checkY].type == FISH){
+    return getLegalSharkMoves(aCell);
+  }
+  if(worldData[x][checkY].type == EMPTY){
+    legalMoves.insert(legalMoves.end(), UP);
+  }
+
+  //DOWN
+  checkY = (y + 1) % ydim;
+  if(aCell.type == SHARK && worldData[x][checkY].type == FISH){
+    return getLegalSharkMoves(aCell);
+  }
+  if(worldData[x][checkY].type == EMPTY){
+    legalMoves.insert(legalMoves.end(), DOWN);
+  }
+
+  //LEFT
+  int checkX = ((x - 1) + xdim) % xdim;
+  if(aCell.type == SHARK && worldData[checkX][y].type == FISH){
+    return getLegalSharkMoves(aCell);
+  }
+  if(worldData[checkX][y].type == EMPTY){
+    legalMoves.insert(legalMoves.end(), LEFT);
+  }
+
+  //RIGHT
+  checkX = (x + 1) % xdim;
+  if(aCell.type == SHARK && worldData[checkX][y].type == FISH){
+    return getLegalSharkMoves(aCell);
+  }
+  if(worldData[checkX][y].type == EMPTY){
+    legalMoves.insert(legalMoves.end(), RIGHT);
+  }
+
+  return legalMoves;
+}
+
+
+
+void updateFish(){
+  for(int x = 0; x < xdim; ++x){
+    for(int y = 0; y < ydim; ++y){
+      if(!worldData[x][y].hasMoved){
+        std::vector<Direction> legalMoves;
+        switch(worldData[x][y].type){
+          case FISH:
+            legalMoves = getLegalMoves(worldData[x][y]);
+            break;
+          case SHARK:
+            legalMoves = getLegalMoves(worldData[x][y]);
+            break;
         }
-        window.display();
-      //}//for - simulation loop
-    }
+        if(legalMoves.size() >= 1){
+          moveFish(legalMoves[rand() % legalMoves.size()], worldData[x][y]);
+        }
+      }
+    }//end y for-loop
+  }//end x for-loop
 
-    return 0;
+  //reset hasMoved
+  for(int x = 0; x < xdim; ++x){
+    for(int y= 0; y < ydim; ++y){
+      worldData[x][y].hasMoved = false;
+    }
+  }
+}
+
+int main(){
+  initializeEcoSystem();
+  setGrid();
+
+  sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
+  while (window.isOpen())
+  {
+    sf::Event event;
+    while (window.pollEvent(event)){
+        if (event.type == sf::Event::Closed)
+            window.close();
+    }
+    //for(;;){
+    //loop these three lines to draw frames
+      window.clear(sf::Color::Black);
+      for(int i=0;i<xdim;++i){
+        for(int k=0;k<ydim;++k){
+          window.draw(recArray[i][k]);
+        }
+      }
+      window.display();
+      updateFish();
+      setGrid();
+      std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
+
+    //}//for - simulation loop
+  }
+
+  return 0;
 }
 
 // 
