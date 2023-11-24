@@ -3,18 +3,18 @@
 # I expect better from you!
 
 CXX = g++
-CPPFILES= test.cpp
+CPPFILES= wator.cpp
 CPPFLAGS= -Wall
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lgomp
-EXE= testApp
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -fopenmp
+EXE= wator
 
-SRCS=test.cpp
+SRCS=wator.cpp
 OBJS=$(subst .cpp,.o,$(SRCS))
 
 #This rule says that each .o file depends on a .cpp file of the same name
 #This is actually built into Make but anyways...
 %.o: %.cpp
-	$(CXX) -c -o $@ $< $(CPPFLAGS)  $(DEBUGFLAGS)
+	$(CXX) -c -o $@ $< $(CPPFLAGS)  $(DEBUGFLAGS) $(LDFLAGS)
 
 
 ALL: $(OBJS)

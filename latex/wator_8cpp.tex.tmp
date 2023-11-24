@@ -1,0 +1,307 @@
+\hypertarget{wator_8cpp}{}\doxysection{wator.\+cpp File Reference}
+\label{wator_8cpp}\index{wator.cpp@{wator.cpp}}
+
+
+main file for the wator project  
+
+
+{\ttfamily \#include $<$SFML/\+Graphics.\+hpp$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$time.\+h$>$}\newline
+{\ttfamily \#include $<$random$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$omp.\+h$>$}\newline
+{\ttfamily \#include $<$chrono$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+Include dependency graph for wator.\+cpp\+:
+% FIG 0
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structcell}{cell}}
+\begin{DoxyCompactList}\small\item\em Cell struct. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{wator_8cpp_a268ae74e98bc01a0e35f5e215580bcb4}{Cell\+Type}} \{ {\bfseries EMPTY}
+, {\bfseries FISH}
+, {\bfseries SHARK}
+ \}
+\item 
+enum \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} \{ {\bfseries UP}
+, {\bfseries DOWN}
+, {\bfseries LEFT}
+, {\bfseries RIGHT}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ vector$<$ \mbox{\hyperlink{structcell}{cell}} $>$ $>$ \mbox{\hyperlink{wator_8cpp_abf5193d73c91f7244077f0d994bd86e0}{world\+Data}} (\mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}, vector$<$ \mbox{\hyperlink{structcell}{cell}} $>$(\mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}}))
+\item 
+void \mbox{\hyperlink{wator_8cpp_a383fc7fecb141fd3cdd1bb2249732da6}{initialize\+Eco\+System}} ()
+\begin{DoxyCompactList}\small\item\em Randomnly generates fish and shark. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{wator_8cpp_a33a81fac34c7d66a8e1c424804090316}{set\+Grid}} ()
+\begin{DoxyCompactList}\small\item\em creates the grid to be displayed \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{wator_8cpp_a5f6c1cec3cc1953b1458aacdee4fe970}{move\+Creature}} (\mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} dir, \mbox{\hyperlink{structcell}{cell}} old\+Cell)
+\begin{DoxyCompactList}\small\item\em Moves a shark or fish in a given direction. \end{DoxyCompactList}\item 
+vector$<$ \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} $>$ \mbox{\hyperlink{wator_8cpp_ac98e3cbf313abbffe21e5556591331ed}{get\+Legal\+Shark\+Moves}} (\mbox{\hyperlink{structcell}{cell}} shark, \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} found\+Fish)
+\begin{DoxyCompactList}\small\item\em Returns a vector of legal directions a shark can take. \end{DoxyCompactList}\item 
+vector$<$ \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} $>$ \mbox{\hyperlink{wator_8cpp_a3248e78e039a23ea84b1387243b97560}{get\+Legal\+Moves}} (\mbox{\hyperlink{structcell}{cell}} a\+Cell)
+\begin{DoxyCompactList}\small\item\em Returns a vector of legal directions a creature can take. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{wator_8cpp_a1640b323872d8bcdfbe46898b8708fae}{update\+Grid}} ()
+\begin{DoxyCompactList}\small\item\em Moves fish and sharks in the grid based on predefined rules randomly. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{wator_8cpp_aa808db6617978dfb5274bbd988873a9b}{reset\+Movement}} ()
+\begin{DoxyCompactList}\small\item\em Resets creature movement. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{wator_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{wator_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{wator_8cpp_aec1cb1155e64c8d47a9ec545230ba421}\label{wator_8cpp_aec1cb1155e64c8d47a9ec545230ba421}} 
+const double {\bfseries fish\+Percent} = 0.\+05
+\item 
+const double \mbox{\hyperlink{wator_8cpp_a35fa1c9156ea0157f06bdaac18f7fa0d}{shark\+Percent}} = 0.\+01
+\item 
+const int \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}} = 150
+\item 
+const int \mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}} = 150
+\item 
+const int \mbox{\hyperlink{wator_8cpp_abf8b4b7d6498609112c42c6d670791ed}{num\+Sharks}} = \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}} $\ast$ \mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}} $\ast$ \mbox{\hyperlink{wator_8cpp_a35fa1c9156ea0157f06bdaac18f7fa0d}{shark\+Percent}}
+\item 
+const int \mbox{\hyperlink{wator_8cpp_a74055d141a4de8f512c867234c5544b2}{num\+Fish}} = \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}$\ast$\mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}} $\ast$ fish\+Percent
+\item 
+const int \mbox{\hyperlink{wator_8cpp_aa2f7182eb04f4c6572ed1f0e9078f57e}{Fish\+Breed}} = 3
+\item 
+const int \mbox{\hyperlink{wator_8cpp_a6f9cfdba53a7d3658d066949098416d1}{Shark\+Breed}} = 5
+\item 
+const int \mbox{\hyperlink{wator_8cpp_a78369c837bb1e9cd0488beeb8053204c}{Shark\+Starve}} = 7
+\item 
+const int \mbox{\hyperlink{wator_8cpp_a5919e280a68eed1e88f8c99c7fb92dea}{threads}} = 10
+\item 
+const int \mbox{\hyperlink{wator_8cpp_ac7ab5ee55dcd44ef05c33e2c710137f3}{Window\+XSize}} = 1080
+\item 
+const int \mbox{\hyperlink{wator_8cpp_accf8a62be256e8e1d7f915d79e218e6f}{Window\+YSize}} = 1920
+\item 
+const int \mbox{\hyperlink{wator_8cpp_a7879482615ac71ba4792918e8ac97974}{cell\+XSize}} = \mbox{\hyperlink{wator_8cpp_ac7ab5ee55dcd44ef05c33e2c710137f3}{Window\+XSize}} / \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}
+\item 
+const int \mbox{\hyperlink{wator_8cpp_ac89bb2757f16a08bba8da53ec1f47754}{cell\+YSize}} = \mbox{\hyperlink{wator_8cpp_accf8a62be256e8e1d7f915d79e218e6f}{Window\+YSize}} / \mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}}
+\item 
+\mbox{\Hypertarget{wator_8cpp_aa61e8678b5dd776a5ce26bf7cd4d92dc}\label{wator_8cpp_aa61e8678b5dd776a5ce26bf7cd4d92dc}} 
+sf\+::\+Rectangle\+Shape {\bfseries rec\+Array} \mbox{[}\mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}\mbox{]}\mbox{[}\mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+main file for the wator project 
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{wator_8cpp_a268ae74e98bc01a0e35f5e215580bcb4}\label{wator_8cpp_a268ae74e98bc01a0e35f5e215580bcb4}} 
+\index{wator.cpp@{wator.cpp}!CellType@{CellType}}
+\index{CellType@{CellType}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{CellType}{CellType}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{wator_8cpp_a268ae74e98bc01a0e35f5e215580bcb4}{Cell\+Type}}}
+
+Cell\+Type enum Represents contents of the cell. Can be EMPTY, FISH, or SHARK \mbox{\Hypertarget{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}\label{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}} 
+\index{wator.cpp@{wator.cpp}!Direction@{Direction}}
+\index{Direction@{Direction}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{Direction}{Direction}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}}
+
+Direction enum Represents possible movements a fish or shark can take. Can be UP, DOWN, LEFT, or RIGHT 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{wator_8cpp_a3248e78e039a23ea84b1387243b97560}\label{wator_8cpp_a3248e78e039a23ea84b1387243b97560}} 
+\index{wator.cpp@{wator.cpp}!getLegalMoves@{getLegalMoves}}
+\index{getLegalMoves@{getLegalMoves}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{getLegalMoves()}{getLegalMoves()}}
+{\footnotesize\ttfamily vector$<$ \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} $>$ get\+Legal\+Moves (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcell}{cell}}}]{a\+Cell }\end{DoxyParamCaption})}
+
+
+
+Returns a vector of legal directions a creature can take. 
+
+Returns a vector of legal directions a creature can take based on a given cell position. Will return an empty vector if no legal moves are found. If the cell is a shark and a fish is found, will call get\+Legal\+Shark\+Moves and return its results instead.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a\+Cell} & The cell to get legal moves for \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+vector of legal directions. Will be empty if no legal moves are found 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wator_8cpp_ac98e3cbf313abbffe21e5556591331ed}\label{wator_8cpp_ac98e3cbf313abbffe21e5556591331ed}} 
+\index{wator.cpp@{wator.cpp}!getLegalSharkMoves@{getLegalSharkMoves}}
+\index{getLegalSharkMoves@{getLegalSharkMoves}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{getLegalSharkMoves()}{getLegalSharkMoves()}}
+{\footnotesize\ttfamily vector$<$ \mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}} $>$ get\+Legal\+Shark\+Moves (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structcell}{cell}}}]{shark,  }\item[{\mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}}]{found\+Fish }\end{DoxyParamCaption})}
+
+
+
+Returns a vector of legal directions a shark can take. 
+
+Returns a vector of legal directions a shark can take. This is only used if a fish is found near a shark in get\+Legal\+Moves
+
+
+\begin{DoxyParams}{Parameters}
+{\em shark} & Shark cell to be moved \\
+\hline
+{\em found\+Fish} & Direction a fish was found \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+vector of directions a shark can take 
+\end{DoxyReturn}
+\mbox{\Hypertarget{wator_8cpp_a383fc7fecb141fd3cdd1bb2249732da6}\label{wator_8cpp_a383fc7fecb141fd3cdd1bb2249732da6}} 
+\index{wator.cpp@{wator.cpp}!initializeEcoSystem@{initializeEcoSystem}}
+\index{initializeEcoSystem@{initializeEcoSystem}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{initializeEcoSystem()}{initializeEcoSystem()}}
+{\footnotesize\ttfamily void initialize\+Eco\+System (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Randomnly generates fish and shark. 
+
+2D vector of cells containing each cell
+
+Fish and shark are generated based on the fish\+Count and shark\+Count parameters \mbox{\Hypertarget{wator_8cpp_a5f6c1cec3cc1953b1458aacdee4fe970}\label{wator_8cpp_a5f6c1cec3cc1953b1458aacdee4fe970}} 
+\index{wator.cpp@{wator.cpp}!moveCreature@{moveCreature}}
+\index{moveCreature@{moveCreature}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{moveCreature()}{moveCreature()}}
+{\footnotesize\ttfamily void move\+Creature (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{wator_8cpp_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}}]{dir,  }\item[{\mbox{\hyperlink{structcell}{cell}}}]{cell }\end{DoxyParamCaption})}
+
+
+
+Moves a shark or fish in a given direction. 
+
+Moves a shark or fish in a direction. Also detemines if a fish or shark breeds, and if a shark starves.
+
+
+\begin{DoxyParams}{Parameters}
+{\em dir} & Enum of the cells direction \\
+\hline
+{\em old\+Cell} & Cell to be moved \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{wator_8cpp_aa808db6617978dfb5274bbd988873a9b}\label{wator_8cpp_aa808db6617978dfb5274bbd988873a9b}} 
+\index{wator.cpp@{wator.cpp}!resetMovement@{resetMovement}}
+\index{resetMovement@{resetMovement}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{resetMovement()}{resetMovement()}}
+{\footnotesize\ttfamily void reset\+Movement (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Resets creature movement. 
+
+Iterates through world\+Data and resets all cell has\+Moved to false. \mbox{\Hypertarget{wator_8cpp_a33a81fac34c7d66a8e1c424804090316}\label{wator_8cpp_a33a81fac34c7d66a8e1c424804090316}} 
+\index{wator.cpp@{wator.cpp}!setGrid@{setGrid}}
+\index{setGrid@{setGrid}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{setGrid()}{setGrid()}}
+{\footnotesize\ttfamily void set\+Grid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+creates the grid to be displayed 
+
+Loops through the rec\+Array and assigns the size, position, and color from corresponding world\+Data coordinate. \mbox{\Hypertarget{wator_8cpp_a1640b323872d8bcdfbe46898b8708fae}\label{wator_8cpp_a1640b323872d8bcdfbe46898b8708fae}} 
+\index{wator.cpp@{wator.cpp}!updateGrid@{updateGrid}}
+\index{updateGrid@{updateGrid}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{updateGrid()}{updateGrid()}}
+{\footnotesize\ttfamily void update\+Grid (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Moves fish and sharks in the grid based on predefined rules randomly. 
+
+Will used get\+Legal\+Moves and get\+Legal\+Shark\+Moves to move the fish and shark in the grid. Also uses pragma omp parallel to run in parallel. Will tile the grid between each thread. \mbox{\Hypertarget{wator_8cpp_abf5193d73c91f7244077f0d994bd86e0}\label{wator_8cpp_abf5193d73c91f7244077f0d994bd86e0}} 
+\index{wator.cpp@{wator.cpp}!worldData@{worldData}}
+\index{worldData@{worldData}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{worldData()}{worldData()}}
+{\footnotesize\ttfamily vector$<$vector$<$\mbox{\hyperlink{structcell}{cell}}$>$ $>$ world\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}}]{,  }\item[{vector$<$ \mbox{\hyperlink{structcell}{cell}} $>$}]{ydim }\end{DoxyParamCaption})}
+
+Global array for Rectangle\+Shape to be used in GUI representation of the simulation 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{wator_8cpp_a7879482615ac71ba4792918e8ac97974}\label{wator_8cpp_a7879482615ac71ba4792918e8ac97974}} 
+\index{wator.cpp@{wator.cpp}!cellXSize@{cellXSize}}
+\index{cellXSize@{cellXSize}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{cellXSize}{cellXSize}}
+{\footnotesize\ttfamily const int cell\+XSize = \mbox{\hyperlink{wator_8cpp_ac7ab5ee55dcd44ef05c33e2c710137f3}{Window\+XSize}} / \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}}
+
+Y window size \mbox{\Hypertarget{wator_8cpp_ac89bb2757f16a08bba8da53ec1f47754}\label{wator_8cpp_ac89bb2757f16a08bba8da53ec1f47754}} 
+\index{wator.cpp@{wator.cpp}!cellYSize@{cellYSize}}
+\index{cellYSize@{cellYSize}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{cellYSize}{cellYSize}}
+{\footnotesize\ttfamily const int cell\+YSize = \mbox{\hyperlink{wator_8cpp_accf8a62be256e8e1d7f915d79e218e6f}{Window\+YSize}} / \mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}}}
+
+Cell X dimensions \mbox{\Hypertarget{wator_8cpp_aa2f7182eb04f4c6572ed1f0e9078f57e}\label{wator_8cpp_aa2f7182eb04f4c6572ed1f0e9078f57e}} 
+\index{wator.cpp@{wator.cpp}!FishBreed@{FishBreed}}
+\index{FishBreed@{FishBreed}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{FishBreed}{FishBreed}}
+{\footnotesize\ttfamily const int Fish\+Breed = 3}
+
+Number of fish to be spawned \mbox{\Hypertarget{wator_8cpp_a74055d141a4de8f512c867234c5544b2}\label{wator_8cpp_a74055d141a4de8f512c867234c5544b2}} 
+\index{wator.cpp@{wator.cpp}!numFish@{numFish}}
+\index{numFish@{numFish}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{numFish}{numFish}}
+{\footnotesize\ttfamily const int num\+Fish = \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}}$\ast$\mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}} $\ast$ fish\+Percent}
+
+Number of sharks to be spawned \mbox{\Hypertarget{wator_8cpp_abf8b4b7d6498609112c42c6d670791ed}\label{wator_8cpp_abf8b4b7d6498609112c42c6d670791ed}} 
+\index{wator.cpp@{wator.cpp}!numSharks@{numSharks}}
+\index{numSharks@{numSharks}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{numSharks}{numSharks}}
+{\footnotesize\ttfamily const int num\+Sharks = \mbox{\hyperlink{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}{xdim}} $\ast$ \mbox{\hyperlink{wator_8cpp_ae4edf59451b5b93478325e260849c564}{ydim}} $\ast$ \mbox{\hyperlink{wator_8cpp_a35fa1c9156ea0157f06bdaac18f7fa0d}{shark\+Percent}}}
+
+Number of rows in the grid \mbox{\Hypertarget{wator_8cpp_a6f9cfdba53a7d3658d066949098416d1}\label{wator_8cpp_a6f9cfdba53a7d3658d066949098416d1}} 
+\index{wator.cpp@{wator.cpp}!SharkBreed@{SharkBreed}}
+\index{SharkBreed@{SharkBreed}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{SharkBreed}{SharkBreed}}
+{\footnotesize\ttfamily const int Shark\+Breed = 5}
+
+Chronon before fish breed \mbox{\Hypertarget{wator_8cpp_a35fa1c9156ea0157f06bdaac18f7fa0d}\label{wator_8cpp_a35fa1c9156ea0157f06bdaac18f7fa0d}} 
+\index{wator.cpp@{wator.cpp}!sharkPercent@{sharkPercent}}
+\index{sharkPercent@{sharkPercent}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{sharkPercent}{sharkPercent}}
+{\footnotesize\ttfamily const double shark\+Percent = 0.\+01}
+
+Percentage of fish that should be rendered \mbox{\Hypertarget{wator_8cpp_a78369c837bb1e9cd0488beeb8053204c}\label{wator_8cpp_a78369c837bb1e9cd0488beeb8053204c}} 
+\index{wator.cpp@{wator.cpp}!SharkStarve@{SharkStarve}}
+\index{SharkStarve@{SharkStarve}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{SharkStarve}{SharkStarve}}
+{\footnotesize\ttfamily const int Shark\+Starve = 7}
+
+Chronon before shark breed \mbox{\Hypertarget{wator_8cpp_a5919e280a68eed1e88f8c99c7fb92dea}\label{wator_8cpp_a5919e280a68eed1e88f8c99c7fb92dea}} 
+\index{wator.cpp@{wator.cpp}!threads@{threads}}
+\index{threads@{threads}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{threads}{threads}}
+{\footnotesize\ttfamily const int threads = 10}
+
+Chronon before shark starve \mbox{\Hypertarget{wator_8cpp_ac7ab5ee55dcd44ef05c33e2c710137f3}\label{wator_8cpp_ac7ab5ee55dcd44ef05c33e2c710137f3}} 
+\index{wator.cpp@{wator.cpp}!WindowXSize@{WindowXSize}}
+\index{WindowXSize@{WindowXSize}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{WindowXSize}{WindowXSize}}
+{\footnotesize\ttfamily const int Window\+XSize = 1080}
+
+Number of threads to run \mbox{\Hypertarget{wator_8cpp_accf8a62be256e8e1d7f915d79e218e6f}\label{wator_8cpp_accf8a62be256e8e1d7f915d79e218e6f}} 
+\index{wator.cpp@{wator.cpp}!WindowYSize@{WindowYSize}}
+\index{WindowYSize@{WindowYSize}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{WindowYSize}{WindowYSize}}
+{\footnotesize\ttfamily const int Window\+YSize = 1920}
+
+X window size \mbox{\Hypertarget{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}\label{wator_8cpp_aea75dd10e09d2d3eb69ed47e48cf81dc}} 
+\index{wator.cpp@{wator.cpp}!xdim@{xdim}}
+\index{xdim@{xdim}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{xdim}{xdim}}
+{\footnotesize\ttfamily const int xdim = 150}
+
+Percentage of sharks that should be rendered \mbox{\Hypertarget{wator_8cpp_ae4edf59451b5b93478325e260849c564}\label{wator_8cpp_ae4edf59451b5b93478325e260849c564}} 
+\index{wator.cpp@{wator.cpp}!ydim@{ydim}}
+\index{ydim@{ydim}!wator.cpp@{wator.cpp}}
+\doxysubsubsection{\texorpdfstring{ydim}{ydim}}
+{\footnotesize\ttfamily const int ydim = 150}
+
+Number of columns in the grid 
