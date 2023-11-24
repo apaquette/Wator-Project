@@ -1,6 +1,5 @@
-# Joseph Kehoe
-# This is very basic. It is just here to show you a simple sfml graphics display that you can use.
-# I expect better from you!
+# Alex Paquette
+# MakeFile for WaTor project
 
 CXX = g++
 CPPFILES= wator.cpp
