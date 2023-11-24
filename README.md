@@ -8,7 +8,7 @@ November 20th, 2023
 Alex Paquette
 
 ### GitHub Repo
-https://github.com/apaquette/WaTor
+https://github.com/apaquette/Wator-Project
 
 ### Licence
 [GSL] https://www.gnu.org/software/gsl/
