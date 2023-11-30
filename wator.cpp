@@ -57,14 +57,14 @@
 
 const double fishPercent = 0.05; /*! Percentage of fish that should be rendered */
 const double sharkPercent = 0.01; /*! Percentage of sharks that should be rendered */
-const int xdim = 150; /*! Number of columns in the grid */
-const int ydim = 150; /*! Number of rows in the grid*/
+const int xdim = 500; /*! Number of columns in the grid */
+const int ydim = 500; /*! Number of rows in the grid*/
 const int numSharks = xdim * ydim * sharkPercent; /*! Number of sharks to be spawned */
 const int numFish = xdim*ydim * fishPercent; /*! Number of fish to be spawned */
 const int FishBreed = 3; /*! Chronon before fish breed */
 const int SharkBreed = 5; /*! Chronon before shark breed */
 const int SharkStarve = 7; /*! Chronon before shark starve */
-const int threads = 10; /*! Number of threads to run */
+int threads = 1; /*! Number of threads to run */
 
 const int WindowXSize = 1080; /*! X window size*/
 const int WindowYSize = 1920; /*! Y window size*/
@@ -117,6 +117,7 @@ vector<vector<cell>> worldData(xdim, vector<cell>(ydim)); /*! 2D vector of cells
 void initializeEcoSystem(){
   random_device rd;  // a seed source for the random number engine
   int seed = rd();
+  seed = 1868995012;
   mt19937 gen(seed); // mersenne_twister_engine seeded with rd()
 
   //assign coordinates to cells
@@ -385,31 +386,49 @@ void resetMovement(){
 
 int main(){
   initializeEcoSystem();
-  setGrid();
-  sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
-  while (window.isOpen())
-  {
-    sf::Event event;
-    while (window.pollEvent(event)){
-        if (event.type == sf::Event::Closed)
-            window.close();
-    }
-    //for(;;){
-    //loop these three lines to draw frames
-      window.clear(sf::Color::Black);
-      for(int i=0;i<xdim;++i){
-        for(int k=0;k<ydim;++k){
-          window.draw(recArray[i][k]);
-        }
+  //setGrid();
+  //sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
+  int cores[4] = { 1, 2, 4, 8};
+  for(int t = 0; t < 4; ++t){
+    threads = cores[t];
+    for(int test = 1; test < 21; ++test){
+      double start, end;
+      start = omp_get_wtime();
+      for(int t = 0;t < 100; ++t){
+        updateGrid();
+        resetMovement();
       }
-      window.display();
-      updateGrid();
-      resetMovement();
-      setGrid();
-      //std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
 
-    //}//for - simulation loop
+      end = omp_get_wtime();
+      double diff = end - start;
+      cout << "Thread Count: " << cores[t] << ", Time: " << diff << " seconds." << endl;
+    }
   }
+  
+
+  // while (window.isOpen())
+  // {
+  //   sf::Event event;
+  //   while (window.pollEvent(event)){
+  //       if (event.type == sf::Event::Closed)
+  //           window.close();
+  //   }
+  //   //for(;;){
+  //   //loop these three lines to draw frames
+  //     window.clear(sf::Color::Black);
+  //     for(int i=0;i<xdim;++i){
+  //       for(int k=0;k<ydim;++k){
+  //         window.draw(recArray[i][k]);
+  //       }
+  //     }
+  //     window.display();
+  //     updateGrid();
+  //     resetMovement();
+  //     setGrid();
+  //     //std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
+
+  //   //}//for - simulation loop
+  // }
 
   return 0;
 }
