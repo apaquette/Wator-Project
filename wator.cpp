@@ -384,10 +384,7 @@ void resetMovement(){
   }
 }
 
-int main(){
-  initializeEcoSystem();
-  //setGrid();
-  //sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
+void runBenchmark(){
   int cores[4] = { 1, 2, 4, 8};
   for(int t = 0; t < 4; ++t){
     threads = cores[t];
@@ -404,31 +401,42 @@ int main(){
       cout << "Thread Count: " << cores[t] << ", Time: " << diff << " seconds." << endl;
     }
   }
+}
+
+void runWithGUI(){
+  setGrid();
+  sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
   
 
-  // while (window.isOpen())
-  // {
-  //   sf::Event event;
-  //   while (window.pollEvent(event)){
-  //       if (event.type == sf::Event::Closed)
-  //           window.close();
-  //   }
-  //   //for(;;){
-  //   //loop these three lines to draw frames
-  //     window.clear(sf::Color::Black);
-  //     for(int i=0;i<xdim;++i){
-  //       for(int k=0;k<ydim;++k){
-  //         window.draw(recArray[i][k]);
-  //       }
-  //     }
-  //     window.display();
-  //     updateGrid();
-  //     resetMovement();
-  //     setGrid();
-  //     //std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
+  while (window.isOpen())
+  {
+    sf::Event event;
+    while (window.pollEvent(event)){
+        if (event.type == sf::Event::Closed)
+            window.close();
+    }
+    //for(;;){
+    //loop these three lines to draw frames
+      window.clear(sf::Color::Black);
+      for(int i=0;i<xdim;++i){
+        for(int k=0;k<ydim;++k){
+          window.draw(recArray[i][k]);
+        }
+      }
+      window.display();
+      updateGrid();
+      resetMovement();
+      setGrid();
+      //std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
 
-  //   //}//for - simulation loop
-  // }
+    //}//for - simulation loop
+  }
+}
+
+int main(){
+  initializeEcoSystem();
+  //runBenchmark();
+  runWithGUI();
 
   return 0;
 }
