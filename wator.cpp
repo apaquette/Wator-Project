@@ -344,7 +344,7 @@ vector<Direction> getLegalMoves(cell aCell){
   \brief Moves fish and sharks in the grid based on predefined rules randomly
 
   Will used getLegalMoves and getLegalSharkMoves to move the fish and shark in the grid. Also uses pragma omp parallel to run
-  in parallel. Will tile the grid between each thread.
+  in parallel. Will tile the grid between each thread horizontally.
 
 */
 void updateGrid(){
