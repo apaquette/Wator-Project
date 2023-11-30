@@ -406,8 +406,6 @@ void runBenchmark(){
 void runWithGUI(){
   setGrid();
   sf::RenderWindow window(sf::VideoMode(WindowXSize,WindowYSize), "SFML Wa-Tor world");
-  
-
   while (window.isOpen())
   {
     sf::Event event;
@@ -415,28 +413,23 @@ void runWithGUI(){
         if (event.type == sf::Event::Closed)
             window.close();
     }
-    //for(;;){
-    //loop these three lines to draw frames
-      window.clear(sf::Color::Black);
-      for(int i=0;i<xdim;++i){
-        for(int k=0;k<ydim;++k){
-          window.draw(recArray[i][k]);
-        }
+    window.clear(sf::Color::Black);
+    for(int i=0;i<xdim;++i){
+      for(int k=0;k<ydim;++k){
+        window.draw(recArray[i][k]);
       }
-      window.display();
-      updateGrid();
-      resetMovement();
-      setGrid();
-      //std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(800));
-
-    //}//for - simulation loop
+    }
+    window.display();
+    updateGrid();
+    resetMovement();
+    setGrid();
   }
 }
 
 int main(){
   initializeEcoSystem();
-  //runBenchmark();
-  runWithGUI();
+  runBenchmark();
+  //runWithGUI();
 
   return 0;
 }
